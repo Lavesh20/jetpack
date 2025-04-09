@@ -137,8 +137,19 @@ const ProjectDetails: React.FC = () => {
       
       {isEditModalOpen && (
         <ProjectModal
+          project={project}
+          isEditing={true}
           onClose={handleCloseModal}
-          projectToEdit={project}
+          onUpdated={() => {
+            // Refresh project data after update
+            if (projectId) {
+              fetchProject(projectId).then(updatedProject => {
+                if (updatedProject) {
+                  setProject(updatedProject);
+                }
+              });
+            }
+          }}
         />
       )}
     </div>

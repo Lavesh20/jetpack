@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Index from '@/pages/Index';
 import Projects from '@/pages/Projects';
 import ProjectDetailsPage from '@/pages/ProjectDetails';
@@ -15,6 +16,17 @@ import Contacts from '@/pages/Contacts';
 import ContactDetails from '@/pages/ContactDetails';
 import NotFound from '@/pages/NotFound';
 import ClientDetails from '@/pages/ClientDetails';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 // Routes definition
 const router = createBrowserRouter([
@@ -70,7 +82,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   );
 }
 

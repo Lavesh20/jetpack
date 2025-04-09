@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { mockData } from './mockData';
 import { 
@@ -30,6 +29,13 @@ async function apiCallWithFallback<T>(
     console.warn('API call failed, using mock data instead:', error);
     return await mockDataFallback();
   }
+}
+
+// Helper function to safely handle API responses that should be arrays
+export function ensureArray<T>(data: T[] | undefined | null): T[] {
+  if (!data) return [];
+  if (!Array.isArray(data)) return [];
+  return data;
 }
 
 // Function to fetch all projects
@@ -273,17 +279,13 @@ export const reorderTasks = async (projectId: string, taskIds: string[]): Promis
 
 // Function to fetch all templates
 export const fetchTemplates = async (): Promise<Template[]> => {
-  return apiCallWithFallback(
-    async () => {
-      const response = await api.get('/templates');
-      return response.data;
-    },
-    async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return mockData.templates;
-    }
-  );
+  try {
+    const response = await apiCallWithFallback('/templates');
+    return ensureArray(response);
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    return [];
+  }
 };
 
 // Function to fetch a single template by ID
@@ -504,17 +506,13 @@ export const reorderTemplateTasks = async (
 
 // Function to fetch all clients
 export const fetchClients = async (): Promise<Client[]> => {
-  return apiCallWithFallback(
-    async () => {
-      const response = await api.get('/clients');
-      return response.data;
-    },
-    async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return mockData.clients;
-    }
-  );
+  try {
+    const response = await apiCallWithFallback('/clients');
+    return ensureArray(response);
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    return [];
+  }
 };
 
 // Function to fetch a single client by ID
@@ -557,17 +555,13 @@ export const createClient = async (clientData: CreateClientFormData): Promise<Cl
 
 // Function to fetch all team members
 export const fetchTeamMembers = async (): Promise<TeamMember[]> => {
-  return apiCallWithFallback(
-    async () => {
-      const response = await api.get('/team-members');
-      return response.data;
-    },
-    async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return mockData.teamMembers;
-    }
-  );
+  try {
+    const response = await apiCallWithFallback('/team-members');
+    return ensureArray(response);
+  } catch (error) {
+    console.error('Error fetching team members:', error);
+    return [];
+  }
 };
 
 // Function to get client projects
